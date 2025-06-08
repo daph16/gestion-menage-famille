@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionnaire de Tâches Ménagères</title>
+    <link rel="stylesheet" href="index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div>
+                <h1>Gestionnaire de Tâches Ménagères</h1>
+                <p class="tagline">Le ménage, en équipe et sans stress !</p>
+            </div>
+            <button id="adminLoginButton" class="btn btn-secondary">Connexion Admin</button>
+        </header>
+
+        <nav class="tab-navigation" aria-label="Navigation principale">
+            <button class="tab-button active" data-view="homeWeekView" role="tab" aria-selected="true" aria-controls="homeWeekViewSection">Planning Semaine</button>
+            <button class="tab-button" data-view="dailyPlan" role="tab" aria-selected="false" aria-controls="dailyPlanSection">Planning Journalier</button>
+            <button class="tab-button" data-view="userTasks" role="tab" aria-selected="false" aria-controls="userTasksSection">Mes Tâches</button>
+            <button class="tab-button" data-view="rules" role="tab" aria-selected="false" aria-controls="rulesSection">Règles Générales</button>
+            <button class="tab-button" data-view="dashboard" id="dashboardTab" role="tab" aria-selected="false" aria-controls="dashboardSection" style="display: none;">Tableau de Bord (Admin)</button>
+        </nav>
+
+        <main>
+            <section id="homeWeekViewSection" class="view-section active-section" role="tabpanel" aria-labelledby="homeWeekView-tab">
+                <h2 id="homeWeekView-heading">Planning de la Semaine</h2>
+                <div id="weekNavigation" class="week-navigation">
+                    <button id="prevWeekButton" class="btn btn-outline">◄ Sem. Précédente</button>
+                    <span id="currentWeekDisplay"></span>
+                    <button id="nextWeekButton" class="btn btn-outline">Sem. Suivante ►</button>
+                </div>
+                <div id="homeWeekViewContent" class="week-grid">
+                    <!-- Les jours de la semaine seront générés par JS -->
+                </div>
+                <p class="no-tasks-message" id="noTasksWeekMessage" style="display:none;">Aucune tâche planifiée pour cette semaine.</p>
+            </section>
+
+            <section id="dashboardSection" class="view-section" role="tabpanel" aria-labelledby="dashboard-tab" style="display: none;">
+                <section class="task-form-section" aria-labelledby="add-task-heading">
+                    <h2 id="add-task-heading">Ajouter une Nouvelle Tâche (Admin)</h2>
+                    <form id="addTaskForm">
+                        <div class="form-group">
+                            <label for="taskName">Nom de la tâche :</label>
+                            <input type="text" id="taskName" name="taskName" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="assignedTo">Assigner à :</label>
+                            <select id="assignedTo" name="assignedTo" required aria-required="true">
+                                <option value="">Sélectionner une personne</option>
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dueDate">Date d'échéance :</label>
+                            <input type="date" id="dueDate" name="dueDate" required aria-required="true">
+                        </div>
+                        <div class="form-group">
+                            <label for="urgency">Urgence :</label>
+                            <select id="urgency" name="urgency" required aria-required="true">
+                                <option value="moyenne">Moyenne</option>
+                                <option value="haute">Haute</option>
+                                <option value="basse">Basse</option>
+                            </select>
+                        </div>
+                        <div class="form-group form-group-checkbox">
+                            <input type="checkbox" id="isRecurring" name="isRecurring">
+                            <label for="isRecurring">Tâche récurrente</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter la Tâche</button>
+                    </form>
+                </section>
+
+                <section class="task-list-section" aria-labelledby="task-list-heading">
+                    <h2 id="task-list-heading">Liste des Tâches (Tableau de Bord Admin)</h2>
+                    <div id="taskList" class="task-list" aria-live="polite">
+                        <p class="no-tasks-message" id="noTasksDashboardMessage">Aucune tâche pour le moment. Ajoutez-en une !</p>
+                    </div>
+                </section>
+            </section>
+
+            <section id="dailyPlanSection" class="view-section" role="tabpanel" aria-labelledby="dailyPlan-tab" style="display: none;">
+                <h2 id="dailyPlan-heading">Planning Journalier</h2>
+                <div class="form-group">
+                    <label for="dailyPlanDate">Choisir une date :</label>
+                    <input type="date" id="dailyPlanDate" name="dailyPlanDate">
+                </div>
+                <div id="dailyTaskList" class="task-list" aria-live="polite">
+                    <p class="no-tasks-message" id="noTasksDailyMessage">Aucune tâche planifiée pour cette date.</p>
+                </div>
+            </section>
+
+            <section id="userTasksSection" class="view-section" role="tabpanel" aria-labelledby="userTasks-tab" style="display: none;">
+                <h2 id="userTasks-heading">Mes Tâches</h2>
+                <div class="form-group">
+                    <label for="userSelectForTodo">Voir les tâches de :</label>
+                    <select id="userSelectForTodo" name="userSelectForTodo">
+                        <option value="">Tous</option>
+                        <!-- Options will be populated by JavaScript -->
+                    </select>
+                </div>
+                <div id="userSpecificTaskList" class="task-list" aria-live="polite">
+                     <p class="no-tasks-message" id="noTasksUserMessage">Sélectionnez un utilisateur pour voir ses tâches.</p>
+                </div>
+            </section>
+
+            <section id="rulesSection" class="view-section" role="tabpanel" aria-labelledby="rules-tab" style="display: none;">
+                <h2 id="rules-heading">Règles Générales du Foyer</h2>
+                <div class="rules-content">
+                    <p>Voici quelques règles importantes pour le bon fonctionnement de notre foyer :</p>
+                    <ul>
+                        <li>Chacun est responsable de garder sa chambre rangée.</li>
+                        <li>La vaisselle doit être faite ou mise au lave-vaisselle après chaque repas.</li>
+                        <li>Sortir les poubelles quand elles sont pleines (voir planning).</li>
+                        <li>Participer activement aux tâches assignées.</li>
+                        <li>Communiquer en cas d'empêchement pour une tâche.</li>
+                    </ul>
+                    <p><em>Ces règles peuvent être discutées et mises à jour ensemble.</em></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2024 Application de Gestion du Ménage</p>
+        </footer>
+    </div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/genai": "https://esm.sh/@google/genai@^0.7.0"
+        }
+      }
+    </script>
+    <script type="module" src="index.tsx"></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
